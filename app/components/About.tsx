@@ -125,7 +125,7 @@ export default function About() {
 
             <h2
               className="font-black text-gray-900 leading-none mb-6"
-              style={{ fontSize: "clamp(32px, 4.5vw, 52px)", letterSpacing: "-0.03em" }}
+              style={{ fontSize: "clamp(32px, 4.5vw, 52px)", letterSpacing: "0.4rem" }}
             >
               Provemos serviços
               <br />
@@ -135,8 +135,10 @@ export default function About() {
                     "linear-gradient(90deg, #2418C7 0%, #2B4DEB 40%, #3785ED 70%, #16D1E8 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
+                  fontFamily: "'Dancing Script', cursive",
                 }}
               >
+
                 exclusivos
               </span> de
               <br />
@@ -146,6 +148,7 @@ export default function About() {
                     "linear-gradient(90deg, #2418C7 0%, #2B4DEB 40%, #3785ED 70%, #16D1E8 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
+                  fontFamily: "'Dancing Script', cursive",
                 }}
               >
                 Logística
@@ -154,7 +157,9 @@ export default function About() {
               Transportes.
             </h2>
 
-            <p className="text-gray-400 text-base leading-relaxed mb-8">
+            <p className="text-gray-400 text-base leading-relaxed mb-8"
+
+            >
               Somos especialistas em logística integrada e agenciamento de navios em Angola. Com uma equipa experiente e parceiros internacionais, garantimos que as suas mercadorias chegam ao destino com segurança, eficiência e pontualidade.
             </p>
 

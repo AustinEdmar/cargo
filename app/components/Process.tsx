@@ -26,12 +26,27 @@ const steps = [
 export default function Process() {
   const sectionRef = useRef<HTMLElement>(null);
   const stepsRef = useRef<HTMLDivElement[]>([]);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const loadGsap = async () => {
       const { gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
       gsap.registerPlugin(ScrollTrigger);
+
+      // Parallax leve no vídeo
+      if (videoRef.current) {
+        gsap.to(videoRef.current, {
+          yPercent: 15,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      }
 
       gsap.fromTo(
         stepsRef.current,
@@ -57,29 +72,69 @@ export default function Process() {
     <section
       ref={sectionRef}
       className="py-20 md:py-28 relative overflow-hidden"
-      style={{
-        backgroundImage: `url("./images/bg-process.png")`
-      }}
     >
-      {/* BG texture */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
+      {/* ── VIDEO BACKGROUND ── */}
+      <div className="absolute inset-0 z-0">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover scale-110"
+          style={{ transformOrigin: "center center" }}
+        >
+          {/*
+            Troque estas src por vídeos ".
+          */}
+          <source
+            src="/videos/maritime.mp4" type="video/mp4"
+          />
+          {/* fallback */}
+          <source
+            src="https://videos.pexels.com/video-files/852395/852395-hd_1920_1080_30fps.mp4"
+            type="video/mp4"
+          />
+        </video>
+
+        {/* Overlay em gradiente escuro — estilo Awwwards */}
         <div
           className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(3,6,20,0.78) 0%, rgba(5,10,35,0.72) 50%, rgba(3,6,20,0.85) 100%)",
+          }}
+        />
 
+        {/* Grain / noise texture sutil */}
+        <div
+          className="absolute inset-0 opacity-[0.045] pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: "repeat",
+            backgroundSize: "128px 128px",
+            mixBlendMode: "overlay",
+          }}
+        />
+
+        {/* Vignette radial nas bordas */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, transparent 45%, rgba(3,6,20,0.65) 100%)",
+          }}
         />
       </div>
 
-      {/* Glow orbs */}
-      <div className="absolute top-0 left-1/4 w-72 h-72 rounded-full bg-gold/5 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-blue-500/5 blur-3xl pointer-events-none" />
+      {/* Glow orbs — mantidos mas reduzidos para não competir com o vídeo */}
+      <div className="absolute top-0 left-1/4 w-72 h-72 rounded-full bg-[#21B8E7]/6 blur-3xl pointer-events-none z-[1]" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-blue-500/5 blur-3xl pointer-events-none z-[1]" />
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500 text-xs text-blue-500 font-bold mb-5 uppercase tracking-widest">
-            <span
-              className="font-bold uppercase tracking-[5px] text-xs text-white"
-
-            >
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/60 bg-blue-500/10 backdrop-blur-sm text-xs font-bold mb-5 uppercase tracking-widest">
+            <span className="font-bold uppercase tracking-[5px] text-xs text-white/90">
               NOSSOS PROCESSOS DE ACTIVIDADES
             </span>
           </span>
@@ -97,8 +152,6 @@ export default function Process() {
           {/* Dashed connector line */}
           <div
             className="hidden md:block absolute top-[72px] left-[22%] right-[22%] h-px"
-            // background:
-            //   "linear-gradient(135deg, #2418C7 0%, #2B4DEB 30%, #3785ED 60%, #21B8E7 85%, #16D1E8 100%)",
             style={{
               background:
                 "repeating-linear-gradient(to right, rgba(245,166,35,0.7) 0, rgba(245,166,35,0.7) 10px, transparent 10px, transparent 22px)",
@@ -112,7 +165,6 @@ export default function Process() {
               className="text-center opacity-0"
             >
               <div className="relative inline-block mb-7">
-                {/* Circle image */}
                 <div
                   className="w-36 h-36 rounded-full overflow-hidden mx-auto shadow-2xl"
                   style={{
