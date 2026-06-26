@@ -13,7 +13,7 @@ export default function Footer() {
       className="relative text-white py-16 overflow-hidden"
       style={{
         background:
-          "linear-gradient(135deg, rgba(15,23,42,0.90) 0%, rgba(30,64,175,0.85) 45%, rgba(37,99,235,0.80) 100%), url('/images/aviao.png')",
+          "linear-gradient(135deg, rgba(15,23,42,0.90) 0%, rgba(30,64,175,1.85) 95%, rgba(37,99,235,0.80) 100%), url('/images/aviao.png')",
 
         backgroundSize: "cover",
         backgroundPosition: "center",
