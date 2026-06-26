@@ -117,7 +117,7 @@ export default function Navbar() {
         </nav>
 
         {/* Right side */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-3 shrink-0 md:hidden">
           {/* Decorative lines — desktop only */}
           <div className="hidden lg:flex flex-col gap-[5px] cursor-pointer p-1">
             <span className={`block w-5 h-0.5 transition-colors duration-300 ${isLight ? "bg-gray-800" : "bg-white"}`} />
