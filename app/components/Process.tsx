@@ -150,13 +150,31 @@ export default function Process() {
 
         <div className="grid md:grid-cols-3 gap-8 relative">
           {/* Dashed connector line */}
-          <div
-            className="hidden md:block absolute top-[72px] left-[22%] right-[22%] h-px"
-            style={{
-              background:
-                "repeating-linear-gradient(to right, rgba(245,166,35,0.7) 0, rgba(245,166,35,0.7) 10px, transparent 10px, transparent 22px)",
-            }}
-          />
+          <svg
+            className="hidden md:block absolute top-[15px] left-[18%] right-[18%] w-[64%] h-24 overflow-visible"
+            viewBox="0 0 1000 120"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#21B8E7" />
+                <stop offset="50%" stopColor="#3785ED" />
+                <stop offset="100%" stopColor="#16D1E8" />
+              </linearGradient>
+            </defs>
+
+            <path
+              d="M0,60
+       C120,20 220,20 340,60
+       S560,100 680,60
+       S900,20 1000,60"
+              fill="none"
+              stroke="url(#waveGradient)"
+              strokeWidth="3"
+              strokeDasharray="6 10"
+              strokeLinecap="round"
+            />
+          </svg>
 
           {steps.map((step, i) => (
             <div
@@ -184,7 +202,7 @@ export default function Process() {
                   className="absolute -top-3 -right-1 w-11 h-11 rounded-full flex items-center justify-center font-black text-white text-sm shadow-lg"
                   style={{
                     background:
-                      "linear-gradient(135deg, #2418C7 0%, #2B4DEB 30%, #3785ED 60%, #21B8E7 85%, #16D1E8 100%)",
+                      "linear-gradient(135deg, #21B8E7 0%, #21B8E7 30%, #3785ED 60%, #21B8E7 85%, #16D1E8 100%)",
                     border: "2px solid rgba(255,255,255,0.25)",
                     boxShadow: "0 8px 25px rgba(43,77,235,0.35)",
                   }}

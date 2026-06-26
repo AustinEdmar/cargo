@@ -29,14 +29,7 @@ export default function Footer() {
 
           {/* Brand col */}
 
-          {/* <Image
-                      src="/images/cargocenter.png"
-                      alt="CargoCenter"
-                      width={900}
-                      height={900}
-                      quality={100}
-                      className="h-8 sm:h-9 md:h-10 w-auto pointer-events-none select-none"
-                    /> */}
+
           <div className="md:col-span-1">
             <div className="mb-5">
               <Image
@@ -191,7 +184,7 @@ export default function Footer() {
         style={{ marginTop: "-20px" }}
       >
         <span
-          className="block font-black uppercase text-white/[0.04] whitespace-nowrap leading-none"
+          className="block font-black uppercase text-white/[0.04] text-center whitespace-nowrap leading-none"
           style={{
             fontSize: "clamp(72px, 20vw, 220px)",
             letterSpacing: "-0.04em",
