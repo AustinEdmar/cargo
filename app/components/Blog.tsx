@@ -95,7 +95,7 @@ export default function Blog() {
         {/* Header */}
         <div className="flex items-end justify-between mb-14 border-b border-gray-100 pb-6">
           <div>
-            <span className="blog-gradient-text font-black text-[10px] uppercase tracking-[6px] block mb-2">
+            <span className="text-navy font-black text-[10px] uppercase tracking-[6px] block mb-2">
               Actualidades
             </span>
             <h2

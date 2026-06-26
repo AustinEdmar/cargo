@@ -43,21 +43,77 @@ const slides: Slide[] = [
   },
 ];
 
-// Renders one background layer (image or video)
+// ── Media cache hook ──────────────────────────────────────────────────────────
+function useMediaCache(mediaList: SlideMedia[]) {
+  const blobMap = useRef<Map<string, string>>(new Map());
+  const loaded = useRef(false);
+
+  useEffect(() => {
+    if (loaded.current) return;
+    loaded.current = true;
+
+    mediaList.forEach((media) => {
+      if (media.type === "image") {
+        const img = new Image();
+        img.src = media.src;
+        if (!blobMap.current.has(media.src)) {
+          blobMap.current.set(media.src, media.src);
+        }
+      }
+
+      if (media.type === "video") {
+        if (blobMap.current.has(media.src)) return;
+
+        fetch(media.src)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const url = URL.createObjectURL(blob);
+            blobMap.current.set(media.src, url);
+          })
+          .catch(() => {
+            blobMap.current.set(media.src, media.src);
+          });
+
+        if (media.poster) {
+          const img = new Image();
+          img.src = media.poster;
+        }
+      }
+    });
+
+    return () => {
+      blobMap.current.forEach((url) => {
+        if (url.startsWith("blob:")) URL.revokeObjectURL(url);
+      });
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function resolve(src: string): string {
+    return blobMap.current.get(src) ?? src;
+  }
+
+  return { resolve };
+}
+
+// ── MediaLayer ────────────────────────────────────────────────────────────────
 function MediaLayer({
   slide,
   videoRef,
+  resolve,
 }: {
   slide: Slide;
   videoRef?: React.RefObject<HTMLVideoElement | null>;
+  resolve: (src: string) => string;
 }) {
   const isVideo = slide.media.type === "video";
+
   if (isVideo) {
     const vm = slide.media as { type: "video"; src: string; poster?: string };
+    const cachedSrc = resolve(vm.src);
     return (
       <video
         ref={videoRef}
-        key={vm.src}
+        key={cachedSrc}
         className="absolute inset-0 w-full h-full object-cover"
         autoPlay
         muted
@@ -65,22 +121,23 @@ function MediaLayer({
         playsInline
         poster={vm.poster}
       >
-        <source src={vm.src} type="video/mp4" />
+        <source src={cachedSrc} type="video/mp4" />
       </video>
     );
   }
+
   return (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src={slide.media.src}
+      src={resolve(slide.media.src)}
       alt={slide.tag}
       className="absolute inset-0 w-full h-full object-cover"
     />
   );
 }
 
+// ── Hero ──────────────────────────────────────────────────────────────────────
 export default function Hero() {
-  // current = slide fully visible; prev = slide fading out
   const [current, setCurrent] = useState(0);
   const [prev, setPrev] = useState<number | null>(null);
   const [transitioning, setTransitioning] = useState(false);
@@ -89,6 +146,8 @@ export default function Hero() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const transitionRef = useRef<NodeJS.Timeout | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const { resolve } = useMediaCache(slides.map((s) => s.media));
 
   const FADE_MS = 1200;
   const SLIDE_MS = 6000;
@@ -99,10 +158,12 @@ export default function Hero() {
 
   const startTimer = () => {
     clearTimer();
-    intervalRef.current = setInterval(() => advance((c) => (c + 1) % slides.length), SLIDE_MS);
+    intervalRef.current = setInterval(
+      () => advance((c) => (c + 1) % slides.length),
+      SLIDE_MS
+    );
   };
 
-  // Core transition: crossfade from current → next
   const advance = (nextFn: (c: number) => number) => {
     if (transitioning) return;
     setCurrent((c) => {
@@ -110,7 +171,6 @@ export default function Hero() {
       if (next === c) return c;
       setPrev(c);
       setTransitioning(true);
-      // after fade completes, clean up prev layer
       transitionRef.current = setTimeout(() => {
         setPrev(null);
         setTransitioning(false);
@@ -125,8 +185,15 @@ export default function Hero() {
     startTimer();
   };
 
-  const goPrev = () => { advance((c) => (c - 1 + slides.length) % slides.length); startTimer(); };
-  const goNext = () => { advance((c) => (c + 1) % slides.length); startTimer(); };
+  const goPrev = () => {
+    advance((c) => (c - 1 + slides.length) % slides.length);
+    startTimer();
+  };
+
+  const goNext = () => {
+    advance((c) => (c + 1) % slides.length);
+    startTimer();
+  };
 
   const toggleVideo = () => {
     if (!videoRef.current) return;
@@ -139,7 +206,6 @@ export default function Hero() {
     }
   };
 
-  // Auto-play video on current slide
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.load();
@@ -164,7 +230,6 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col overflow-hidden">
 
-      {/* ── CSS for gradient text (avoids backgroundClip conflict) ── */}
       <style>{`
         .hero-gradient-text {
           background: radial-gradient(circle at 20% 80%, #16D1E8 0%, #2B82EE 25%, transparent 50%),
@@ -188,7 +253,7 @@ export default function Hero() {
         }
       `}</style>
 
-      {/* ── Background: prev layer (fades OUT) ── */}
+      {/* Prev layer (fades out) */}
       {prev !== null && (
         <div
           className="absolute inset-0"
@@ -198,23 +263,23 @@ export default function Hero() {
             transition: `opacity ${FADE_MS}ms ease-in-out`,
           }}
         >
-          <MediaLayer slide={slides[prev]} />
+          <MediaLayer slide={slides[prev]} resolve={resolve} />
         </div>
       )}
 
-      {/* ── Background: current layer (fades IN) ── */}
+      {/* Current layer (fades in) */}
       <div
         className="absolute inset-0"
         style={{
           zIndex: 1,
-          opacity: transitioning ? 1 : 1,
+          opacity: 1,
           transition: `opacity ${FADE_MS}ms ease-in-out`,
         }}
       >
-        <MediaLayer slide={slide} videoRef={videoRef} />
+        <MediaLayer slide={slide} videoRef={videoRef} resolve={resolve} />
       </div>
 
-      {/* ── Overlay gradient ── */}
+      {/* Overlay */}
       <div
         className="absolute inset-0"
         style={{
@@ -224,7 +289,7 @@ export default function Hero() {
         }}
       />
 
-      {/* ── Main content ── */}
+      {/* Content */}
       <div className="relative flex-1 flex items-center" style={{ zIndex: 10 }}>
         <div className="w-full max-w-5xl mx-auto px-5 sm:px-8 md:px-12 pt-28 pb-10">
           <div className="flex flex-col items-center text-center">
@@ -260,7 +325,6 @@ export default function Hero() {
               <br />
               <span className="text-white">{slide.line2}</span>
               <br />
-              {/* Use className-only gradient — no inline backgroundClip conflict */}
               <span
                 className="hero-gradient-text font-bold uppercase tracking-[5px]"
                 style={{ fontSize: "0.65em" }}
@@ -288,9 +352,7 @@ export default function Hero() {
                 transition: `opacity ${FADE_MS * 0.8}ms ease-in-out`,
               }}
             >
-              <button
-                className="hero-gradient-btn flex items-center gap-2.5 text-white font-black px-8 py-4 rounded-full text-xs uppercase tracking-widest transition-transform hover:scale-105"
-              >
+              <button className="hero-gradient-btn flex items-center gap-2.5 text-white font-black px-8 py-4 rounded-full text-xs uppercase tracking-widest transition-transform hover:scale-105">
                 Os Nossos Serviços <ArrowRight size={14} />
               </button>
 
@@ -332,7 +394,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ── Arrows ── */}
+      {/* Arrows */}
       <button
         onClick={goPrev}
         className="absolute left-3 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 md:w-11 md:h-11 rounded-full border border-white/30 flex items-center justify-center text-white hover:bg-white/15 hover:border-white/60 transition-all font-black text-lg"
