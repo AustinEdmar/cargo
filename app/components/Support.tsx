@@ -125,7 +125,7 @@ export default function Support() {
           </a>
         </div>
 
-        <p className="text-white/35 text-xs mt-8 font-medium tracking-wide">
+        <p className="text-white/80 text-xs mt-8 font-medium tracking-wide">
           Segunda a Sexta: 08h–18h &nbsp;·&nbsp; Urgências: 24/7
         </p>
       </div>
