@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Phone, MessageSquare, ArrowRight } from "lucide-react";
-import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 
 export default function Support() {
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadGsap = async () => {
@@ -14,174 +12,122 @@ export default function Support() {
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
       gsap.registerPlugin(ScrollTrigger);
 
-      // FIX 1: animação da esquerda não afecta a imagem — a imagem fica fora do leftRef
       gsap.fromTo(
-        leftRef.current,
-        { opacity: 0, x: -50 },
+        ctaRef.current,
+        { opacity: 0, y: 40 },
         {
           opacity: 1,
-          x: 0,
-          duration: 0.9,
+          y: 0,
+          duration: 1,
           ease: "power3.out",
-          scrollTrigger: { trigger: leftRef.current, start: "top 80%", once: true },
-        }
-      );
-
-      gsap.fromTo(
-        rightRef.current,
-        { opacity: 0, x: 50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.9,
-          delay: 0.1,
-          ease: "power3.out",
-          scrollTrigger: { trigger: rightRef.current, start: "top 80%", once: true },
+          scrollTrigger: {
+            trigger: ctaRef.current,
+            start: "top 80%",
+            once: true,
+          },
         }
       );
     };
     loadGsap();
   }, []);
 
-  return (
-    <section className="relative overflow-hidden" style={{ minHeight: "400px" }}>
-      <div className="grid lg:grid-cols-2 min-h-[400px]">
-
-        {/* Esquerda — fundo branco */}
-        {/* FIX 2: a secção wrapper é o container de posicionamento;
-                   leftRef só cobre o conteúdo de texto, não a imagem */}
-
-        {/* className="relative text-white py-16 overflow-hidden"
-      style={{
-        backgroundImage: `url("./images/bg-footer.png")`
-      }} */}
-        <div
-          className="relative flex flex-col justify-center overflow-hidden"
-        >
-
-          {/* FIX 3: Imagem fora do leftRef — não herda opacity:0 do GSAP.
-                     z-index: 1 garante que fica acima do fundo mas abaixo do texto (z-10) */}
-          <Image
-            src="/images/man.png"
-            alt="Support"
-            width={900}   // ← maior que os 750px do CSS
-            height={900}
-            quality={100} // ← garante sem compressão
-            className="absolute right-[-80px] bottom-[-50px] w-[500px] md:w-[750px] h-auto z-[1] pointer-events-none select-none
-            "
-          />
-
-          {/* FIX 4: div de gradiente vazia removida — estava a sobrepor a imagem */}
-
-          {/* Conteúdo de texto — animado pelo GSAP */}
-          <div
-            ref={leftRef}
-            className="relative z-10 px-8 md:px-16 py-16 md:py-20"
-          >
-            <span className="text-blue-400 font-black text-[10px] uppercase tracking-[6px] block mb-6">
-              Suporte Dedicado
-            </span>
-
-            <h2
-              className="font-black text-blue-950 leading-none mb-6"
-              style={{
-                fontSize: "clamp(36px, 5.5vw, 64px)",
-                letterSpacing: "-0.03em",
-              }}
-            >
-              Estamos
-              <br />
-              sempre
-              <br />
-              <span
-                style={{
-                  WebkitTextStroke: "2px #0B1F5C",
-                  color: "transparent",
-                }}
-              >
-                disponíveis.
-              </span>
-            </h2>
-
-            <p className="text-slate-600 text-sm leading-relaxed max-w-sm">
-              A nossa equipa de suporte está disponível 24 horas por dia, 7 dias por
-              semana, para responder a todas as suas questões logísticas.
-            </p>
-          </div>
-        </div>
-
-        {/* Direita — Gold */}
-        {/* style={{
-  background:
-    "radial-gradient(circle at 20% 80%, #16D1E8 0%, #2B82EE 25%, transparent 50%), radial-gradient(circle at 85% 45%, #21B8E7 0%, #3785ED 35%, transparent 60%), linear-gradient(135deg, #2418C7 0%, #2B4DEB 50%, #3785ED 100%)",
-}} */}
-        {/* FIX 5: opacity-0 removido da className — o GSAP define o estado inicial via fromTo */}
-        <div
-          ref={rightRef}
-          className="relative flex flex-col justify-center px-8 md:px-16 py-16 md:py-20 overflow-hidden"
-          style={{
+  /* style={{
             background:
               "radial-gradient(circle at 20% 80%, #16D1E8 0%, #2B82EE 25%, transparent 50%), radial-gradient(circle at 85% 45%, #21B8E7 0%, #3785ED 35%, transparent 60%), linear-gradient(135deg, #2418C7 0%, #2B4DEB 50%, #3785ED 100%)",
+          }} */
+  return (
+    <section
+      className="relative overflow-hidden"
+      style={{
+        minHeight: "520px",
+        background:
+          "radial-gradient(circle at 20% 80%, #16D1E8 0%, #2B82EE 25%, transparent 50%), radial-gradient(circle at 85% 45%, #21B8E7 0%, #3785ED 35%, transparent 60%), linear-gradient(135deg, #2418C7 0%, #2B4DEB 50%, #3785ED 100%)",
+      }}
+    >
+      {/* Diagonal stripe overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 14px)",
+        }}
+      />
+
+      {/* Watermark text */}
+      <div
+        className="absolute bottom-0 left-0 right-0 overflow-hidden pointer-events-none select-none"
+        style={{ lineHeight: 0.85 }}
+      >
+        <span
+          className="block font-black uppercase text-white/[0.06] whitespace-nowrap"
+          style={{
+            fontSize: "clamp(80px, 18vw, 220px)",
+            letterSpacing: "-0.04em",
+            transform: "translateY(15%)",
           }}
         >
-          {/* Pattern diagonal de fundo */}
-          <div
-            className="absolute inset-0 pointer-events-none"
+          SUPORTE
+        </span>
+      </div>
+
+      <div
+        ref={ctaRef}
+        className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 py-24 md:py-32 flex flex-col items-center text-center"
+      >
+        {/* Eyebrow */}
+        <span className="inline-block text-white/60 font-bold text-[11px] uppercase tracking-[6px] mb-6">
+          Suporte Dedicado
+        </span>
+
+        {/* Headline */}
+        <h2
+          className="font-black text-white leading-none mb-6"
+          style={{
+            fontSize: "clamp(40px, 7vw, 88px)",
+            letterSpacing: "-0.03em",
+          }}
+        >
+          Estamos sempre{" "}
+          <span
             style={{
-              backgroundImage:
-                "repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 12px)",
+              WebkitTextStroke: "2px rgba(255,255,255,0.9)",
+              color: "transparent",
             }}
-          />
+          >
+            disponíveis.
+          </span>
+        </h2>
 
-          <div className="relative z-10">
-            <p className="text-white/70 font-bold text-sm uppercase tracking-widest mb-10">
-              Como podemos ajudar?
-            </p>
+        <p className="text-white/55 text-base leading-relaxed max-w-lg mb-12">
+          A nossa equipa de suporte está disponível 24 horas por dia, 7 dias
+          por semana, para responder a todas as suas questões logísticas.
+        </p>
 
-            {/* CTA principal */}
-            <button className="w-full flex items-center justify-between bg-white text-navy font-black text-base px-7 py-5 rounded-2xl mb-4 hover:bg-[#0B1F5C] hover:text-white transition-all duration-300 group shadow-lg">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-amber-100 group-hover:bg-white/10 flex items-center justify-center transition-colors">
-                  <MessageSquare size={18} className="text-[#0B1F5C] group-hover:text-white transition-colors" />
-                </div>
-                <div className="text-left">
-                  <div className="text-xs text-gray-400 group-hover:text-white/50 font-semibold transition-colors">
-                    Prefere escrever?
-                  </div>
-                  <div className="font-black text-[#0B1F5C] group-hover:text-white transition-colors">
-                    Enviar Mensagem
-                  </div>
-                </div>
-              </div>
-              <ArrowRight
-                size={18}
-                className="text-gray-300 group-hover:text-white group-hover:translate-x-1 transition-all"
-              />
-            </button>
+        {/* CTA buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+          <button className="flex-1 flex items-center justify-center gap-3 bg-white text-[#0B1F5C] font-black text-sm px-8 py-4 rounded-xl hover:bg-[#0B1F5C] hover:text-white transition-all duration-300 group shadow-xl">
+            Enviar Mensagem
+            <ArrowRight
+              size={16}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </button>
 
-            {/* CTA telefone */}
-            <button className="w-full flex items-center justify-between bg-white/20 border-2 border-white/30 backdrop-blur-sm text-white font-black text-base px-7 py-5 rounded-2xl hover:bg-white/35 transition-all duration-300 group">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
-                  <Phone size={18} className="text-white" />
-                </div>
-                <div className="text-left">
-                  <div className="text-xs text-white/60 font-semibold">Ligue directamente</div>
-                  <div className="font-black text-white text-lg">+244 928 40 31 86</div>
-                </div>
-              </div>
-              <ArrowRight
-                size={18}
-                className="text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all"
-              />
-            </button>
-
-            {/* Horário */}
-            <p className="text-white/50 text-xs mt-6 font-medium">
-              Segunda a Sexta: 08h–18h &nbsp;·&nbsp; Urgências: 24/7
-            </p>
-          </div>
+          <a
+            href="tel:+244928403186"
+            className="flex-1 flex items-center justify-center gap-3 bg-white/10 border border-white/25 backdrop-blur-sm text-white font-black text-sm px-8 py-4 rounded-xl hover:bg-white/20 transition-all duration-300 group"
+          >
+            +244 928 40 31 86
+            <ArrowRight
+              size={16}
+              className="text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all"
+            />
+          </a>
         </div>
+
+        <p className="text-white/35 text-xs mt-8 font-medium tracking-wide">
+          Segunda a Sexta: 08h–18h &nbsp;·&nbsp; Urgências: 24/7
+        </p>
       </div>
     </section>
   );
