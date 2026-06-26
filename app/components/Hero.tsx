@@ -335,7 +335,7 @@ export default function Hero() {
 
             {/* Subtitle */}
             <p
-              className="text-white/60 max-w-xl text-sm sm:text-base leading-relaxed mb-8 sm:mb-10"
+              className="text-white max-w-xl text-sm sm:text-base leading-relaxed mb-8 sm:mb-10"
               style={{
                 opacity: contentFaded ? 0 : 1,
                 transition: `opacity ${FADE_MS * 0.8}ms ease-in-out`,
@@ -380,8 +380,8 @@ export default function Hero() {
                   key={i}
                   onClick={() => goToIndex(i)}
                   className={`rounded-full transition-all duration-300 ${i === current
-                      ? "w-10 h-1.5 bg-blue-500"
-                      : "w-1.5 h-1.5 bg-white/25 hover:bg-white/50"
+                    ? "w-10 h-1.5 bg-blue-500"
+                    : "w-1.5 h-1.5 bg-white/25 hover:bg-white/50"
                     }`}
                 />
               ))}
