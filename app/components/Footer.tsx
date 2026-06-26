@@ -193,12 +193,12 @@ export default function Footer() {
         <span
           className="block font-black uppercase text-white/[0.04] whitespace-nowrap leading-none"
           style={{
-            fontSize: "clamp(72px, 20vw, 260px)",
+            fontSize: "clamp(72px, 20vw, 220px)",
             letterSpacing: "-0.04em",
             transform: "translateY(8%)",
           }}
         >
-          CARGOCENTER
+          CARGO CENTER
         </span>
       </div>
     </footer>
