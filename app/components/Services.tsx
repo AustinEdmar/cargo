@@ -191,18 +191,11 @@ export default function Services() {
 
   return (
     <section
-      className="relative py-16 md:py-24 overflow-hidden"
+      className="relative py-16 md:py-16 overflow-hidden"
       style={{ backgroundImage: `url("./images/bg-services.png")` }}
     >
-      {/* Ghost watermark */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-        <span
-          className="font-black uppercase text-gray-100"
-          style={{ fontSize: "clamp(80px, 20vw, 220px)", letterSpacing: "-0.05em", opacity: 0.6 }}
-        >
-          SERVIÇOS
-        </span>
-      </div>
+
+
 
       <div ref={titleRef} className="max-w-7xl mx-auto px-4 text-center mb-12 relative z-10 opacity-0">
         <span
@@ -311,8 +304,8 @@ export default function Services() {
               key={i}
               onClick={() => goTo(TOTAL + i)}
               className={`rounded-full transition-all duration-300 ${i === realIndex
-                  ? "w-8 h-2 bg-blue-400"
-                  : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
+                ? "w-8 h-2 bg-blue-400"
+                : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
                 }`}
             />
           ))}
