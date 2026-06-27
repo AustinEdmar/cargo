@@ -285,7 +285,8 @@ export default function Hero() {
         style={{
           zIndex: 2,
           background:
-            "linear-gradient(160deg, rgba(18,18,140,0.55) 0%, rgba(25,25,160,0.40) 50%, rgba(8,8,70,0.65) 100%)",
+            "linear-gradient(160deg, rgba(0,0,40,0.82) 0%, rgba(5,15,90,0.78) 50%, rgba(0,0,20,0.92) 100%)",
+
         }}
       />
 
