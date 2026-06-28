@@ -90,8 +90,15 @@ export default function Services() {
         titleRef.current,
         { opacity: 0, y: 40 },
         {
-          opacity: 1, y: 0, duration: 0.8, ease: "power3.out",
-          scrollTrigger: { trigger: titleRef.current, start: "top 80%", once: true },
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: titleRef.current,
+            start: "top 80%",
+            once: true,
+          },
         }
       );
     };
@@ -142,34 +149,15 @@ export default function Services() {
     const diff = i - active;
     const absDiff = Math.abs(diff);
 
-    if (absDiff > 2) return { display: "none" };
+    if (absDiff > 2) return null;
 
-    // Separação horizontal: card central amplo, laterais recuados
-    const translateX = diff * 235;
+    const translateX = diff * 170;
+    const scale = absDiff === 0 ? 1 : absDiff === 1 ? 0.78 : 0.60;
+    const translateZ = absDiff === 0 ? 0 : absDiff === 1 ? -80 : -160;
+    const rotateY = diff * -12;
+    // zIndex alto o suficiente para o card central tapar completamente os laterais
+    const zIndex = absDiff === 0 ? 20 : absDiff === 1 ? 10 : 5;
 
-    // Escala muito mais agressiva: central destaca, laterais somem
-    const scale = absDiff === 0 ? 1 : absDiff === 1 ? 0.72 : 0.54;
-
-    // Profundidade Z reforçada
-    const translateZ = absDiff === 0 ? 0 : absDiff === 1 ? -140 : -260;
-
-    // Opacidade: central total, 1º lateral semi-transparente, 2º quase invisível
-    const opacity = absDiff === 0 ? 1 : absDiff === 1 ? 0.45 : 0.2;
-
-    // Rotação Y mais pronunciada nos laterais
-    const rotateY = diff * -14;
-
-    const zIndex = 10 - absDiff;
-
-    // Blur e escurecimento nos cards laterais
-    const filter =
-      absDiff === 0
-        ? "none"
-        : absDiff === 1
-          ? "blur(2px) brightness(0.65)"
-          : "blur(4px) brightness(0.5)";
-
-    // Sombra profunda só no card activo
     const boxShadow =
       absDiff === 0
         ? "0 32px 80px rgba(11,31,92,0.45), 0 8px 24px rgba(11,31,92,0.3)"
@@ -179,9 +167,8 @@ export default function Services() {
       position: "absolute",
       left: "50%",
       transform: `translateX(calc(-50% + ${translateX}px)) translateZ(${translateZ}px) scale(${scale}) rotateY(${rotateY}deg)`,
-      opacity,
+      opacity: 1, // sempre 1 — sem transparência no elemento raiz
       zIndex,
-      filter,
       boxShadow,
       transition: "all 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
       cursor: diff !== 0 ? "pointer" : "grab",
@@ -192,16 +179,23 @@ export default function Services() {
   return (
     <section
       className="relative py-16 md:py-16 overflow-hidden"
-      style={{ backgroundImage: `url("./images/bg-services.png")` }}
+      style={{
+        backgroundImage: "url('/images/bg4.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        isolation: "isolate",
+      }}
     >
-
-
-
-      <div ref={titleRef} className="max-w-7xl mx-auto px-4 text-center mb-12 relative z-10 opacity-0">
+      <div
+        ref={titleRef}
+        className="max-w-7xl mx-auto px-4 text-center mb-12 relative z-10 opacity-0"
+      >
         <span
           className="font-bold uppercase tracking-[5px] text-xs"
           style={{
-            background: "linear-gradient(90deg, #2418C7 0%, #2B4DEB 40%, #3785ED 70%, #16D1E8 100%)",
+            background:
+              "linear-gradient(90deg, #2418C7 0%, #2B4DEB 40%, #3785ED 70%, #16D1E8 100%)",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -214,14 +208,19 @@ export default function Services() {
           className="font-black mt-3 leading-tight"
           style={{ fontSize: "clamp(28px, 4.5vw, 48px)", letterSpacing: "-0.02em" }}
         >
-          <span className="inline-block text-navy">Acompanhe todos os nossos serviços</span>
+          <span className="inline-block text-navy">
+            Acompanhe todos os nossos serviços
+          </span>
           <br />
           <span className="inline-block text-navy">ao redor de Angola</span>
         </h2>
       </div>
 
       {/* 3D Stage */}
-      <div className="relative w-full flex flex-col items-center" style={{ perspective: "1400px", zIndex: 1 }}>
+      <div
+        className="relative w-full flex flex-col items-center"
+        style={{ perspective: "1400px", zIndex: 10 }}
+      >
         <p className="text-gray-400 text-xs mb-6 flex items-center gap-2 select-none">
           <span>👆</span> Arraste ou clique nas cards para navegar
         </p>
@@ -240,29 +239,52 @@ export default function Services() {
             const style = getCardStyle(i);
             if (!style) return null;
 
+            const diff = i - active;
+            const absDiff = Math.abs(diff);
+
             return (
               <div
                 key={i}
                 style={style}
                 onClick={() => {
-                  const diff = i - active;
-                  if (diff !== 0 && Math.abs(diff) <= 2) goTo(i);
+                  if (diff !== 0 && absDiff <= 2) goTo(i);
                 }}
                 className="w-[260px] md:w-[290px] rounded-2xl overflow-hidden"
               >
                 <div className="relative h-[400px] md:h-[440px]">
+                  {/* Imagem */}
                   <img
                     src={svc.img}
                     alt={svc.title}
                     draggable={false}
                     className="w-full h-full object-cover pointer-events-none"
                   />
+
+                  {/* Gradiente de baixo */}
                   <div
                     className="absolute inset-0"
                     style={{
                       background: `linear-gradient(to top, ${svc.color} 0%, ${svc.color}cc 30%, transparent 65%)`,
                     }}
                   />
+
+                  {/* Overlay escuro nos cards laterais — substitui opacity+filter no elemento raiz */}
+                  {absDiff > 0 && (
+                    <div
+                      className="absolute inset-0 rounded-2xl"
+                      style={{
+                        background:
+                          absDiff === 1
+                            ? "rgba(0, 0, 0, 0.52)"
+                            : "rgba(0, 0, 0, 0.75)",
+                        backdropFilter: absDiff === 1 ? "blur(1px)" : "blur(2px)",
+                        transition: "background 0.55s, backdrop-filter 0.55s",
+                        pointerEvents: "none",
+                      }}
+                    />
+                  )}
+
+                  {/* Badge categoria */}
                   <div className="absolute top-4 left-4">
                     <span
                       className="text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest"
@@ -274,6 +296,8 @@ export default function Services() {
                       {svc.category}
                     </span>
                   </div>
+
+                  {/* Conteúdo inferior */}
                   <div className="absolute bottom-0 left-0 right-0 p-5">
                     <h3
                       className="font-black text-white text-lg mb-2 uppercase"
@@ -283,10 +307,15 @@ export default function Services() {
                     </h3>
                     {i === active && (
                       <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        <p className="text-white/70 text-xs leading-relaxed mb-4">{svc.desc}</p>
+                        <p className="text-white/70 text-xs leading-relaxed mb-4">
+                          {svc.desc}
+                        </p>
                         <button className="flex items-center gap-2 text-amber-400 font-bold text-xs hover:text-amber-300 transition-colors group">
                           Mais detalhes
-                          <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                          <ArrowRight
+                            size={12}
+                            className="group-hover:translate-x-1 transition-transform"
+                          />
                         </button>
                       </div>
                     )}
@@ -304,8 +333,8 @@ export default function Services() {
               key={i}
               onClick={() => goTo(TOTAL + i)}
               className={`rounded-full transition-all duration-300 ${i === realIndex
-                ? "w-8 h-2 bg-blue-400"
-                : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
+                  ? "w-8 h-2 bg-blue-400"
+                  : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
                 }`}
             />
           ))}
